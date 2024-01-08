@@ -147,7 +147,7 @@ def train(dataset_path, training_steps):
     return retrain.run(bottleneck_dir=bottleneck_dir,
                 how_many_training_steps=training_steps,
                 image_dir=labels_path, output_graph=output_graph,
-                output_labels=output_labels)
+                output_labels=output_labels, eval_step_interval=50)
 
 class TrainWorker(object):
 

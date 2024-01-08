@@ -24,7 +24,7 @@ class Classify(object):
 
     def load_graph(self, model_file):
         graph = tf.Graph()
-        graph_def = tf.GraphDef()
+        graph_def = tf.compat.v1.GraphDef()
 
         with open(model_file, "rb") as f:
             graph_def.ParseFromString(f.read())
@@ -44,7 +44,7 @@ class Classify(object):
 
             input_name = "file_reader"
 
-            file_reader = tf.read_file(file_name, input_name)
+            file_reader = tf.io.read_file(file_name, input_name)
 
         
             image_reader = tf.image.decode_jpeg(
@@ -52,16 +52,16 @@ class Classify(object):
 
             float_caster = tf.cast(image_reader, tf.float32)
             dims_expander = tf.expand_dims(float_caster, 0)
-            resized = tf.image.resize_bilinear(dims_expander, [input_height, input_width])
+            resized = tf.image.resize(dims_expander, [input_height, input_width], method=tf.image.ResizeMethod.BILINEAR)
             normalized = tf.divide(tf.subtract(resized, [input_mean]), [input_std])
-            sess = tf.Session()
+            sess = tf.compat.v1.Session()
             result = sess.run(normalized)
 
             return result
 
     def load_labels(self, label_file):
         label = []
-        proto_as_ascii_lines = tf.gfile.GFile(label_file).readlines()
+        proto_as_ascii_lines = tf.io.gfile.GFile(label_file).readlines()
         for l in proto_as_ascii_lines:
             label.append(l.rstrip())
         return label
@@ -90,7 +90,7 @@ class Classify(object):
         input_operation = self.graph.get_operation_by_name(input_name)
         output_operation = self.graph.get_operation_by_name(output_name)
 
-        with tf.Session(graph=self.graph) as sess:
+        with tf.compat.v1.Session(graph=self.graph) as sess:
             results = sess.run(output_operation.outputs[0], {
                 input_operation.outputs[0]: t
             })

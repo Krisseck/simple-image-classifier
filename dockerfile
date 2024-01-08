@@ -1,4 +1,4 @@
-FROM rackspacedot/python37
+FROM python:3.7-bookworm
 
 COPY ./app/ /app/
 

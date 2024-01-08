@@ -1,4 +1,4 @@
-FROM clarinpl/cuda-python:3.7
+FROM nvcr.io/nvidia/tensorflow:20.11-tf2-py3
 
 COPY ./app/ /app/
 
